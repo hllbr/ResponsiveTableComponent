@@ -33,6 +33,12 @@ const examples = [
     path: "/no-filter",
     description: "Filter olmadan tablo",
   },
+  {
+    id: "variable-height",
+    title: "Variable Height",
+    path: "/variable-height",
+    description: "Variable row heights with full-row snap",
+  },
 ];
 
 interface SidebarProps {
@@ -83,10 +89,11 @@ export default function Sidebar({
     "/no-pagination",
     "/loading",
     "/no-filter",
+    "/variable-height",
   ].includes(location.pathname);
 
   return (
-    <div className="w-80 bg-pink-200 border-r border-pink-300 h-screen overflow-y-auto flex flex-col">
+    <div className="w-80 bg-pink-200 border-r border-pink-300 h-screen overflow-y-auto overscroll-none flex flex-col">
       {/* Navigation */}
       <div className="p-3 space-y-2">
         <Link
@@ -121,6 +128,61 @@ export default function Sidebar({
         >
           📋 Header + Table
         </Link>
+
+        <Link
+          to="/large-data"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/large-data"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          📊 Large Data
+        </Link>
+
+        <Link
+          to="/no-pagination"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/no-pagination"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          📄 No Pagination
+        </Link>
+
+        <Link
+          to="/loading"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/loading"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          ⏳ Loading
+        </Link>
+
+        <Link
+          to="/no-filter"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/no-filter"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          🔍 Filter Yok
+        </Link>
+
+        <Link
+          to="/variable-height"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/variable-height"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          📏 Variable Height
+        </Link>
       </div>
 
       {/* Page Info Section */}
@@ -144,6 +206,8 @@ export default function Sidebar({
               ? "⏳ Loading"
               : location.pathname === "/no-filter"
               ? "🔍 Filter Yok"
+              : location.pathname === "/variable-height"
+              ? "📏 Variable Height"
               : "📄 Diğer Sayfa"}
           </p>
           {showControls && (

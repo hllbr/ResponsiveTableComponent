@@ -24,7 +24,7 @@ export default function Layout() {
   const currentData = getCurrentPageData(location.pathname);
 
   return (
-    <div className="flex h-screen bg-slate-50">
+    <div className="flex h-screen bg-slate-50 overscroll-none">
       <Sidebar
         currentPath={location.pathname}
         pageSize={currentData.pageSize}
@@ -50,9 +50,11 @@ export default function Layout() {
       />
       <main className="flex-1 overflow-auto min-h-0">
         {isFullPage || isHeaderTable ? (
-          <Outlet />
+          <div className="h-full overflow-hidden overscroll-none">
+            <Outlet />
+          </div>
         ) : (
-          <div className="p-6 max-w-5xl mx-auto min-h-0">
+          <div className="h-full overflow-hidden overscroll-none p-6 max-w-5xl mx-auto">
             <Outlet />
           </div>
         )}

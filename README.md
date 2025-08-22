@@ -1,305 +1,117 @@
-# 📊 Responsive Table Simulation
+# Responsive Table Component
 
-React 18, TypeScript ve Tailwind CSS ile geliştirilmiş, dinamik tablo bileşeni test ve simülasyon uygulaması.
+A responsive table component that automatically adapts to viewport size with intelligent scrolling behavior.
 
-## 🚀 Mevcut Özellikler
+## Features
 
-### ✅ **Tamamlanan Özellikler**
+### 🎯 Core Functionality
 
-#### 🎛️ **Sidebar Kontrolü**
+- **Viewport-based sizing**: Automatically fits to available screen space
+- **No page scroll**: When content fits, table extends to fill viewport
+- **Smart scrolling**: Only table body scrolls when content overflows
+- **Full-row snap**: Ensures complete rows are visible (no partial rows)
+- **Variable row heights**: Supports different content sizes (images, long text, etc.)
 
-- **Genişlik:** 320px kompakt sidebar
-- **Navigation:** Home, Full Page, Header + Table seçenekleri
-- **Aktif Sayfa Göstergesi:** Hangi sayfada olduğunuz ve o sayfanın ayarları
-- **Tablo Kontrolleri:** Accordion açılır/kapanır panel (default kapalı)
+### 🔧 Layout Behavior
 
-#### 📊 **Sayfa Bazlı Data Yönetimi**
+- **Short content**: `height: auto` - no gaps, no scroll
+- **Long content**: `height: viewport-fit` with tbody scroll only
+- **Sticky elements**: Header, filter, and pagination remain fixed
+- **Responsive**: Adapts to window resize and content changes
+
+### 📱 Responsive Design
+
+- Uses `ResizeObserver` and `MutationObserver` for real-time updates
+- RAF (RequestAnimationFrame) for smooth layout calculations
+- Handles dynamic content changes gracefully
+
+## Usage
 
 ```tsx
-// Her sayfa için ayrı ayarlar
-"/": { pageSize: 5, totalRows: 5 }                    // Temel örnek
-"/full-page": { pageSize: 20, totalRows: 1000 }      // Full page test
-"/header-table": { pageSize: 10, totalRows: 100 }    // Header + Table layout
-"/large-data": { pageSize: 25, totalRows: 1000 }     // Büyük veri testi
-"/no-pagination": { pageSize: 50, totalRows: 50, withPagination: false }
-"/loading": { pageSize: 10, totalRows: 20, loading: true }
-"/no-filter": { pageSize: 15, totalRows: 30, withFilter: false }
+import TableSim from "./components/TableSim";
+
+<TableSim
+  pageSize={20}
+  totalRows={1000}
+  withFilter={true}
+  withPagination={true}
+  loading={false}
+/>;
 ```
 
-#### 🎨 **Dinamik Tablo Sistemi**
+## Examples
 
-- **Dinamik Yükseklik:** İçeriğe göre otomatik boyutlandırma (maxHeight: 70vh)
-- **Responsive Layout:** Farklı ekran boyutlarında uyumlu
-- **Sticky Header:** Sabit header, filter ve table titles
-- **Scroll Optimizasyonu:** Sadece data alanında scroll
-- **Temizlenmiş Pagination:** Scroll alanının dışında, overlap yok
+### Basic Example (`/`)
 
-#### 🎯 **Layout Sistemleri**
+Simple table with minimal data - demonstrates auto-height behavior.
 
-**🏠 Home Layout:**
+### Full Page Example (`/full-page`)
 
-```
-┌─ Sidebar (320px) ─┬─ Main Content ─────────────┐
-│ Navigation        │ ┌─ Header ──────────────┐ │
-│ Page Info         │ │ Title + Description   │ │
-│ Controls Panel    │ ├─ Table (dinamik) ────┤ │
-│ (Accordion)       │ │ Header|Titles|Filter  │ │
-│                   │ │ Data rows (scroll)    │ │
-│                   │ │ Pagination            │ │
-│                   │ └───────────────────────┘ │
-└───────────────────┴─────────────────────────────┘
-```
+Large dataset showing scroll behavior with sticky pagination.
 
-**📊 Full Page Layout:**
+### Variable Height Example (`/variable-height`)
 
-```
-┌─ Sidebar (320px) ─┬─ Full Page Table ────────┐
-│ Navigation        │ ┌─ Table (ortalanmış) ─┐ │
-│ Page Info         │ │ Max-width: 896px     │ │
-│ Controls Panel    │ │ Header|Titles|Filter │ │
-│ (Accordion)       │ │ Data rows (scroll)   │ │
-│                   │ │ Pagination           │ │
-│                   │ └─────────────────────┘ │
-└───────────────────┴─────────────────────────────┘
-```
+Demonstrates full-row snap with rows of different heights:
 
-**📋 Header + Table Layout:**
+- Simple rows (1 line)
+- Complex rows (2-3 lines with metadata)
+- Critical rows (with status indicators)
 
-```
-┌─ Sidebar ─┬─ Header Area (128px sabit) ──────┐
-│ Controls  │ Header + Table Layout             │
-│           │ Bu sayfa için özel ayarlar...     │
-│           ├─ Kırmızı Ayırıcı Çizgi ──────────┤
-│           │ ┌─ Table (dinamik yükseklik) ──┐ │
-│           │ │ Header|Titles|Filter        │ │
-│           │ │ Data rows (scroll)          │ │
-│           │ │ Pagination                  │ │
-│           │ └─────────────────────────────┘ │
-└───────────┴─────────────────────────────────────┘
-```
+### Large Data Example (`/large-data`)
 
-#### 🔧 **Kontrol Özellikleri**
+Performance testing with large datasets.
 
-- **Page Size:** 1, 5, 10, 20, 25, 50, 100 seçenekleri
-- **Total Rows:** 1-1000 arası veri seti seçenekleri
-- **Component Toggles:** Filter ve Pagination açma/kapama
-- **Scenario Tests:** Loading, No Data, Delayed Loading (2s, 5s)
-- **Quick Tests:** Error, Minimal (1), Performance (1000)
+### No Pagination Example (`/no-pagination`)
 
-#### 🎪 **Test Senaryoları**
+Table without pagination - shows clean bottom edge.
 
-- **Minimal Test:** 1 satır gösterim (kompakt görünüm)
-- **Performance Test:** 1000 veri + büyük page size
-- **Loading States:** Manuel toggle + delayed simulation
-- **Empty States:** No Data toggle ile boş veri testi
-- **Component Variations:** Filter/Pagination kombinasyonları
+### Loading Example (`/loading`)
 
-### 🏗️ **Teknik Mimari**
+Loading state demonstration.
 
-#### **Frontend Stack**
+### No Filter Example (`/no-filter`)
 
-- **React 18.2** - Component library
-- **TypeScript** - Type safety
-- **Tailwind 3.4** - Utility-first CSS
-- **React Router 7** - Client-side routing
-- **Vite 5** - Build tool
+Table without filter controls.
 
-#### **State Management**
+## Technical Implementation
 
-- **Context API** - Global table state
-- **Page-specific data** - Her sayfa kendi ayarlarını korur
-- **Automatic persistence** - Sayfa geçişlerinde ayarlar korunur
+### useMeasureLayout Hook
 
-#### **Performance Optimizations**
+The core layout logic is handled by the `useMeasureLayout` hook:
 
-- **ResizeObserver** - Dinamik yükseklik hesaplama
-- **requestAnimationFrame** - Smooth rendering
-- **MutationObserver** - Table content changes tracking
-- **Conditional rendering** - Component-based visibility
+1. **Viewport Calculation**: `window.innerHeight - container.top - 8`
+2. **Component Heights**: Header, filter, thead, tbody, pagination
+3. **Layout Decision**:
+   - If `naturalHeight <= availableViewport`: `height: auto`
+   - If `naturalHeight > availableViewport`: `height: viewport-fit` with scroll
+4. **Full-row Snap**: Calculates how many complete rows fit in available space
 
-#### **Component Hierarchy**
+### Observers
 
-```
-App
-├── TableProvider (Context)
-├── Layout
-│   ├── Sidebar
-│   │   ├── Navigation
-│   │   ├── PageInfo
-│   │   └── DataControls (Accordion)
-│   └── Main
-│       └── Pages
-│           ├── BasicExample
-│           ├── FullPageExample
-│           ├── HeaderTableExample
-│           ├── LargeDataExample
-│           ├── NoPaginationExample
-│           ├── LoadingExample
-│           └── NoFilterExample
-└── TableSim
-    ├── useMeasureLayout (Hook)
-    ├── Header (Sticky)
-    ├── Titles (Sticky)
-    ├── Filter (Sticky)
-    ├── ScrollArea (Data)
-    └── Pagination (Fixed)
+- **ResizeObserver**: Watches all layout-affecting elements
+- **MutationObserver**: Monitors content changes in scroll area
+- **Window resize**: Handles viewport changes
+
+### Edge Cases Handled
+
+- No pagination (`Hp = 0`)
+- Loading/empty states
+- Dynamic content changes
+- Variable row heights
+
+## Browser Support
+
+- Modern browsers with ResizeObserver support
+- Fallback to standard resize events for older browsers
+
+## Development
+
+```bash
+npm install
+npm run dev
+npm run build
 ```
 
-## 🎯 **Karşılanan Beklentiler**
+## Testing
 
-### ✅ **Başarıyla Tamamlanan**
-
-1. **Sidebar Navigation** - Sayfalar arası geçiş
-2. **Sayfa Bazlı Örnekler** - Her sayfa farklı tablo konfigürasyonu
-3. **Dinamik Kontroller** - PageSize, TotalRows, Filter, Pagination
-4. **Responsive Layout** - Farklı ekran boyutları desteği
-5. **Dinamik Yükseklik** - İçeriğe göre otomatik boyutlandırma
-6. **Pagination Düzeltmesi** - Overlap problemleri çözüldü
-7. **Scroll Optimizasyonu** - Sadece veri alanında scroll
-8. **Header Layout** - Üstte header, altta tablo sistemi
-9. **Sidebar Kontrolleri** - Merkezi kontrol paneli
-10. **Context State Management** - Sayfa bazlı veri yönetimi
-11. **Accordion UI** - Kompakt kontrol paneli
-12. **Test Senaryoları** - Loading, No Data, Performance testleri
-
-## 🚧 **Geliştirilecek Alanlar**
-
-### 🔄 **Kısa Vadeli İyileştirmeler**
-
-#### **1. Gelişmiş Test Senaryoları**
-
-- [ ] **Error Handling:** Gerçek error state komponenti
-- [ ] **Network Simulation:** Slow network, timeout scenarios
-- [ ] **Data Validation:** Invalid data handling
-- [ ] **Edge Cases:** 0 data, negative values, very large numbers
-
-#### **2. UI/UX İyileştirmeleri**
-
-- [ ] **Dark Mode:** Theme switcher
-- [ ] **Keyboard Navigation:** Accessibility improvements
-- [ ] **Loading Animations:** Better loading indicators
-- [ ] **Tooltip System:** Interactive help texts
-
-#### **3. Performance Monitoring**
-
-- [ ] **Render Metrics:** Component re-render tracking
-- [ ] **Memory Usage:** Memory leak detection
-- [ ] **Bundle Analysis:** Code splitting optimization
-- [ ] **Profiling Dashboard:** Performance metrics display
-
-### 🚀 **Orta Vadeli Geliştirmeler**
-
-#### **1. Advanced Table Features**
-
-- [ ] **Sorting:** Clickable column headers
-- [ ] **Real Filtering:** Functional search/filter system
-- [ ] **Column Resizing:** Draggable column widths
-- [ ] **Row Selection:** Checkbox selection system
-- [ ] **Export Features:** CSV, Excel, PDF export
-
-#### **2. Data Management**
-
-- [ ] **Real API Integration:** Backend data connection
-- [ ] **Caching System:** Data persistence layer
-- [ ] **Offline Support:** Service worker implementation
-- [ ] **Data Synchronization:** Real-time updates
-
-#### **3. Testing Infrastructure**
-
-- [ ] **Unit Tests:** Component testing with Jest
-- [ ] **E2E Tests:** Playwright/Cypress automation
-- [ ] **Visual Regression:** Screenshot comparison
-- [ ] **Performance Tests:** Load testing scenarios
-
-### 🎯 **Uzun Vadeli Hedefler**
-
-#### **1. Platform Expansion**
-
-- [ ] **Mobile App:** React Native version
-- [ ] **Desktop App:** Electron wrapper
-- [ ] **PWA Features:** Offline functionality
-- [ ] **Multi-language:** i18n support
-
-#### **2. Advanced Analytics**
-
-- [ ] **Usage Tracking:** User interaction analytics
-- [ ] **A/B Testing:** Feature comparison framework
-- [ ] **Heat Maps:** User behavior visualization
-- [ ] **Performance Dashboard:** Real-time metrics
-
-#### **3. Enterprise Features**
-
-- [ ] **User Management:** Authentication system
-- [ ] **Role-based Access:** Permission management
-- [ ] **Audit Logs:** Action tracking
-- [ ] **Custom Themes:** Brand customization
-
-## 🛠️ **Bilinen Sorunlar**
-
-### ⚠️ **Minor Issues**
-
-1. **Loading State:** Delay simulation sadece demo amaçlı
-2. **Error Handling:** Alert popup yerine proper error UI gerekli
-3. **Memory:** Sayfa geçişlerinde eski state'ler temizlenmiyor
-4. **Mobile:** Çok küçük ekranlarda sidebar responsive değil
-
-### 🔧 **Optimization Opportunities**
-
-1. **Bundle Size:** Unused Tailwind classes
-2. **Component Updates:** Unnecessary re-renders
-3. **Layout Shifts:** First paint optimization
-4. **Accessibility:** ARIA labels and keyboard navigation
-
-## 📈 **Gelecek Roadmap**
-
-### **Phase 1: Stabilization** (2-3 hafta)
-
-- Bug fixes ve minor improvements
-- Test coverage artırımı
-- Performance optimization
-- Documentation tamamlama
-
-### **Phase 2: Enhancement** (1-2 ay)
-
-- Advanced table features
-- Real API integration
-- Comprehensive testing
-- UI/UX improvements
-
-### **Phase 3: Scale** (3-6 ay)
-
-- Platform expansion
-- Enterprise features
-- Analytics integration
-- Production deployment
-
-## 🎮 **Nasıl Test Edilir**
-
-### **Temel Test Akışı:**
-
-1. **Home** sayfasından başla (PageSize: 5, Total: 5)
-2. **Sidebar** → **Tablo Kontrolleri** → Accordion'ı aç
-3. **Page Size** değiştir (1, 100) → Dinamik yükseklik testi
-4. **Total Rows** artır (1000) → Scroll performance testi
-5. **Full Page** → Kontrollerin merkezi çalışma testi
-6. **Header + Table** → Layout combination testi
-7. **Loading/No Data** toggles → State management testi
-
-### **Performance Test:**
-
-```
-Page Size: 100, Total Rows: 1000
-Filter: ON, Pagination: ON
-→ Scroll smoothness ve memory usage gözlemle
-```
-
-### **Edge Case Test:**
-
-```
-Page Size: 1, Total Rows: 1
-→ Minimal layout kompaktlığı kontrol et
-```
-
----
-
-**🎯 Sonuç:** Proje temel gereksinimleri karşılamış durumda. Dinamik tablo sistemi, sayfa bazlı kontroller ve responsive layout başarıyla çalışıyor. Gelecek geliştirmeler için solid bir temel oluşturulmuş.
+Navigate to `/variable-height` to test the full-row snap functionality with variable content heights.

@@ -31,6 +31,48 @@ export default function TableSim({
   const visibleRows = Math.min(pageSize, totalRows);
   const rows = Array.from({ length: visibleRows }, (_, i) => i + 1);
 
+  // Function to generate variable content for demonstration
+  const getVariableContent = (rowNum: number) => {
+    const type = rowNum % 4;
+    switch (type) {
+      case 0:
+        return {
+          device: `Device #${rowNum}`,
+          owner: `User ${rowNum}`,
+          status: rowNum % 2 ? "Active" : "Idle",
+          className: "odd:bg-cyan-50 even:bg-cyan-100",
+        };
+      case 1:
+        return {
+          device: `Complex Device #${rowNum} with Long Name`,
+          owner: `Administrator ${rowNum} (Senior Level)`,
+          status: rowNum % 2 ? "Maintenance Required" : "Online",
+          className: "odd:bg-blue-50 even:bg-blue-100",
+        };
+      case 2:
+        return {
+          device: `Device #${rowNum}`,
+          owner: `User ${rowNum}`,
+          status: "Pending Review",
+          className: "odd:bg-green-50 even:bg-green-100",
+        };
+      case 3:
+        return {
+          device: `Advanced Device #${rowNum} - Enterprise Edition`,
+          owner: `System Administrator ${rowNum} (Level 3)`,
+          status: "Critical Alert - Requires Immediate Attention",
+          className: "odd:bg-red-50 even:bg-red-100",
+        };
+      default:
+        return {
+          device: `Device #${rowNum}`,
+          owner: `User ${rowNum}`,
+          status: "Unknown",
+          className: "odd:bg-gray-50 even:bg-gray-100",
+        };
+    }
+  };
+
   return (
     <div
       ref={containerRef}
@@ -79,16 +121,45 @@ export default function TableSim({
             <div className="px-3 py-12 text-center text-slate-500">No Data</div>
           ) : (
             <div ref={tbodyRef}>
-              {rows.map((n) => (
-                <div
-                  key={n}
-                  className="grid grid-cols-3 gap-0 odd:bg-cyan-50 even:bg-cyan-100 border-b"
-                >
-                  <div className="px-3 py-3">Device #{n}</div>
-                  <div className="px-3 py-3">User {n}</div>
-                  <div className="px-3 py-3">{n % 2 ? "Active" : "Idle"}</div>
-                </div>
-              ))}
+              {rows.map((n) => {
+                const content = getVariableContent(n);
+                return (
+                  <div
+                    key={n}
+                    className={`grid grid-cols-3 gap-0 border-b ${content.className}`}
+                  >
+                    <div className="px-3 py-3">
+                      <div className="font-medium">{content.device}</div>
+                      {n % 4 === 1 && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          Last updated: {new Date().toLocaleDateString()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="px-3 py-3">
+                      <div>{content.owner}</div>
+                      {n % 4 === 1 && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          Department: Engineering
+                        </div>
+                      )}
+                    </div>
+                    <div className="px-3 py-3">
+                      <div className="flex items-center gap-2">
+                        <span>{content.status}</span>
+                        {n % 4 === 3 && (
+                          <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                        )}
+                      </div>
+                      {n % 4 === 3 && (
+                        <div className="text-xs text-red-600 mt-1">
+                          Priority: High
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

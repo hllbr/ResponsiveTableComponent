@@ -10,7 +10,7 @@ export default function HeaderTableExample() {
   const currentData = getCurrentPageData(location.pathname);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-screen overflow-hidden flex flex-col">
       {/* Header Area - Top Section */}
       <div className="h-32 bg-gradient-to-r from-slate-100 to-slate-200 border-b-2 border-red-400 flex items-center justify-center">
         <div className="text-center">

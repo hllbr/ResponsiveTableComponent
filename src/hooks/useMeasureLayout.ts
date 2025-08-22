@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Viewport-based responsive table layout:
+ * Enhanced viewport-based responsive table layout:
  * - Calculates available viewport height dynamically
  * - Only tbody scrolls when content overflows
- * - No gaps when content is short
+ * - No gaps when content is short (height: auto)
+ * - Full-row snap when scrolling is needed
  * - Smooth layout updates with RAF and thresholds
  */
 export function useMeasureLayout() {
@@ -13,8 +14,8 @@ export function useMeasureLayout() {
   const filterRef = useRef<HTMLDivElement | null>(null);
   const paginationRef = useRef<HTMLDivElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
-  const theadRef = useRef<HTMLTableSectionElement | null>(null);
-  const tbodyRef = useRef<HTMLTableSectionElement | null>(null);
+  const theadRef = useRef<HTMLDivElement | null>(null);
+  const tbodyRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -32,13 +33,6 @@ export function useMeasureLayout() {
       const rect = container.getBoundingClientRect();
       const availableViewport = Math.max(0, window.innerHeight - rect.top - 8);
 
-      // Update container maxHeight if viewport changed significantly
-      const currentMaxHeight =
-        parseFloat(container.style.maxHeight || "0") || 0;
-      if (Math.abs(currentMaxHeight - availableViewport) > 1) {
-        container.style.maxHeight = `${availableViewport}px`;
-      }
-
       // 2. Calculate component heights
       const Hh = header?.offsetHeight ?? 0;
       const Hf = filter?.offsetHeight ?? 0;
@@ -49,21 +43,72 @@ export function useMeasureLayout() {
       const tbodyHeight = tbody?.offsetHeight ?? 0;
       const contentHeight = theadHeight + tbodyHeight;
 
-      // 4. Calculate available scroll area height
-      const maxScrollAreaHeight = availableViewport - Hh - Hf - Hp;
-      const naturalHeight = contentHeight + Hh + Hf;
+      // 4. Calculate natural height (all content without scroll)
+      const naturalHeight = Hh + Hf + theadHeight + tbodyHeight + Hp;
+
+      // Debug logging
+      console.log("Layout Debug:", {
+        availableViewport,
+        naturalHeight,
+        Hh,
+        Hf,
+        Hp,
+        theadHeight,
+        tbodyHeight,
+        needsScroll: naturalHeight > availableViewport,
+      });
 
       // 5. Apply layout logic
       if (naturalHeight <= availableViewport) {
-        // Short content: no scroll, no gaps
+        // Short content: no scroll, no gaps, extend to fit viewport
+        container.style.height = "auto";
         scrollArea.style.height = "auto";
         scrollArea.style.overflowY = "visible";
         scrollArea.style.paddingBottom = "0px";
+        console.log("Layout: Short content - no scroll needed");
       } else {
-        // Long content: scroll only tbody
-        scrollArea.style.height = `${maxScrollAreaHeight}px`;
+        // Long content: scroll only tbody with full-row snap
+        container.style.height = `${availableViewport}px`;
+
+        // Calculate max body height for scrolling
+        const maxBodyHeight = availableViewport - Hh - Hf - Hp - theadHeight;
+
+        // Full-row snap: find how many complete rows fit
+        let visibleRowsHeight = 0;
+        let visibleRowCount = 0;
+
+        if (tbody && maxBodyHeight > 0) {
+          // Get all row divs (direct children of tbody)
+          const rows = Array.from(tbody.children) as HTMLElement[];
+
+          for (const row of rows) {
+            const rowHeight = row.offsetHeight;
+            if (visibleRowsHeight + rowHeight <= maxBodyHeight + 1) {
+              visibleRowsHeight += rowHeight;
+              visibleRowCount++;
+            } else {
+              break;
+            }
+          }
+        }
+
+        // Apply snapped height if we have visible rows
+        if (visibleRowCount > 0 && visibleRowsHeight > 0) {
+          scrollArea.style.height = `${theadHeight + visibleRowsHeight}px`;
+          console.log("Layout: Full-row snap applied", {
+            visibleRowCount,
+            visibleRowsHeight,
+            snappedHeight: theadHeight + visibleRowsHeight,
+          });
+        } else {
+          scrollArea.style.height = `${maxBodyHeight}px`;
+          console.log("Layout: Standard scroll height", { maxBodyHeight });
+        }
+
         scrollArea.style.overflowY = "auto";
-        scrollArea.style.paddingBottom = "0px";
+
+        // Add padding bottom for pagination when scrolling
+        scrollArea.style.paddingBottom = Hp > 0 ? `${Hp}px` : "0px";
       }
 
       // Always enable horizontal scroll if needed

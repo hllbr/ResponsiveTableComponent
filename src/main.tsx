@@ -11,6 +11,7 @@ import LargeDataExample from "./pages/LargeDataExample";
 import NoPaginationExample from "./pages/NoPaginationExample";
 import LoadingExample from "./pages/LoadingExample";
 import NoFilterExample from "./pages/NoFilterExample";
+import VariableHeightExample from "./pages/VariableHeightExample";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/no-filter",
         element: <NoFilterExample />,
+      },
+      {
+        path: "/variable-height",
+        element: <VariableHeightExample />,
       },
     ],
   },

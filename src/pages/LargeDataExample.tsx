@@ -10,8 +10,8 @@ export default function LargeDataExample() {
   const currentData = getCurrentPageData(location.pathname);
 
   return (
-    <div className="space-y-6">
-      <div>
+    <div className="h-screen overflow-hidden flex flex-col p-6">
+      <div className="flex-shrink-0">
         <h1 className="text-2xl font-semibold text-gray-900">
           Büyük Veri Örneği
         </h1>
@@ -24,7 +24,7 @@ export default function LargeDataExample() {
       </div>
 
       {/* Sadece Tablo - Tam genişlik */}
-      <div className="min-h-0">
+      <div className="flex-1 min-h-0 mt-6">
         <TableSim
           pageSize={currentData.pageSize}
           totalRows={currentData.showNoData ? 0 : currentData.totalRows}
