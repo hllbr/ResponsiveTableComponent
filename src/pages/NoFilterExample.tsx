@@ -21,7 +21,7 @@ export default function NoFilterExample() {
       </div>
 
       {/* Sadece Tablo - Tam genişlik */}
-      <div>
+      <div className="min-h-0">
         <TableSim
           pageSize={currentData.pageSize}
           totalRows={currentData.showNoData ? 0 : currentData.totalRows}

@@ -48,11 +48,11 @@ export default function Layout() {
         }
         onErrorTest={handleErrorTest}
       />
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto min-h-0">
         {isFullPage || isHeaderTable ? (
           <Outlet />
         ) : (
-          <div className="p-6 max-w-5xl mx-auto">
+          <div className="p-6 max-w-5xl mx-auto min-h-0">
             <Outlet />
           </div>
         )}

@@ -35,12 +35,8 @@ export default function TableSim({
     <div
       ref={containerRef}
       className={`flex flex-col overflow-hidden rounded border shadow-sm bg-white ${className}`}
-      style={{
-        maxHeight: className.includes("h-full") ? "100%" : "70vh",
-        height: className.includes("h-full") ? "100%" : "auto",
-      }}
     >
-      {/* Header + Filter + Table Headers — scroll DIŞINDA, sabit */}
+      {/* Üst Bölüm: Header + Titles + Filter — scroll DIŞINDA, sabit */}
       <div className="flex-shrink-0">
         {/* Header */}
         <div ref={headerRef} className="px-3 py-2 text-white bg-indigo-600">
@@ -70,7 +66,7 @@ export default function TableSim({
         )}
       </div>
 
-      {/* Scroll alanı - SADECE tablo verisi (tbody) */}
+      {/* Orta Bölüm: Scroll alanı - SADECE tablo verisi (tbody) */}
       <div
         ref={scrollAreaRef}
         className="flex-1 overflow-y-auto overflow-x-auto overscroll-contain"
@@ -98,7 +94,7 @@ export default function TableSim({
         </div>
       </div>
 
-      {/* Pagination — scroll alanının DIŞINDA */}
+      {/* Alt Bölüm: Pagination — scroll alanının DIŞINDA */}
       {withPagination && (
         <div
           ref={paginationRef}
