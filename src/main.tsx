@@ -9,7 +9,7 @@ import FullPageExample from "./pages/FullPageExample";
 import HeaderTableExample from "./pages/HeaderTableExample";
 import LargeDataExample from "./pages/LargeDataExample";
 import NoPaginationExample from "./pages/NoPaginationExample";
-import LoadingExample from "./pages/LoadingExample";
+
 import NoFilterExample from "./pages/NoFilterExample";
 import VariableHeightExample from "./pages/VariableHeightExample";
 
@@ -38,10 +38,7 @@ const router = createBrowserRouter([
         path: "/no-pagination",
         element: <NoPaginationExample />,
       },
-      {
-        path: "/loading",
-        element: <LoadingExample />,
-      },
+
       {
         path: "/no-filter",
         element: <NoFilterExample />,

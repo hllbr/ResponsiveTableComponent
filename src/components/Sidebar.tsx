@@ -21,12 +21,7 @@ const examples = [
     path: "/no-pagination",
     description: "Pagination olmadan tablo",
   },
-  {
-    id: "loading",
-    title: "Yükleniyor",
-    path: "/loading",
-    description: "Loading durumu örneği",
-  },
+
   {
     id: "no-filter",
     title: "Filter Yok",
@@ -87,7 +82,7 @@ export default function Sidebar({
     "/header-table",
     "/large-data",
     "/no-pagination",
-    "/loading",
+
     "/no-filter",
     "/variable-height",
   ].includes(location.pathname);
@@ -149,17 +144,6 @@ export default function Sidebar({
           }`}
         >
           📄 No Pagination
-        </Link>
-
-        <Link
-          to="/loading"
-          className={`block w-full p-3 rounded-lg text-center transition-colors ${
-            location.pathname === "/loading"
-              ? "bg-pink-600 text-white font-semibold"
-              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
-          }`}
-        >
-          ⏳ Loading
         </Link>
 
         <Link
