@@ -24,7 +24,7 @@ export default function LargeDataExample() {
       </div>
 
       {/* Sadece Tablo - Tam genişlik */}
-      <div className="flex-1 min-h-0 mt-6">
+      <div className="flex-1 min-h-0 mt-6 flex flex-col h-full">
         <TableSim
           pageSize={currentData.pageSize}
           totalRows={currentData.showNoData ? 0 : currentData.totalRows}

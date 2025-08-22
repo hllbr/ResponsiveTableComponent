@@ -25,7 +25,7 @@ export default function HeaderTableExample() {
       </div>
 
       {/* Table Area - Bottom Section */}
-      <div className="flex-1 min-h-0 p-4 flex flex-col">
+      <div className="flex-1 min-h-0 p-4 flex flex-col h-full">
         <TableSim
           pageSize={currentData.pageSize}
           totalRows={currentData.showNoData ? 0 : currentData.totalRows}

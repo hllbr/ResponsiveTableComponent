@@ -107,8 +107,8 @@ export function useMeasureLayout() {
 
         scrollArea.style.overflowY = "auto";
 
-        // Add padding bottom for pagination when scrolling
-        scrollArea.style.paddingBottom = Hp > 0 ? `${Hp}px` : "0px";
+        // Remove padding bottom - it causes unnecessary empty space
+        scrollArea.style.paddingBottom = "0px";
       }
 
       // Always enable horizontal scroll if needed

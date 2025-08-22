@@ -76,7 +76,7 @@ export default function TableSim({
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col overflow-hidden rounded border shadow-sm bg-white ${className}`}
+      className={`flex flex-col overflow-hidden rounded border shadow-sm bg-white h-full ${className}`}
     >
       {/* Üst Bölüm: Header + Titles + Filter — scroll DIŞINDA, sabit */}
       <div className="flex-shrink-0">
@@ -111,7 +111,7 @@ export default function TableSim({
       {/* Orta Bölüm: Scroll alanı - SADECE tablo verisi (tbody) */}
       <div
         ref={scrollAreaRef}
-        className="flex-1 overflow-y-auto overflow-x-auto overscroll-contain"
+        className="flex-1 overflow-y-auto overflow-x-auto overscroll-contain min-h-0"
       >
         {/* Sadece Table Body */}
         <div className="w-full">
@@ -120,7 +120,7 @@ export default function TableSim({
           ) : rows.length === 0 ? (
             <div className="px-3 py-12 text-center text-slate-500">No Data</div>
           ) : (
-            <div ref={tbodyRef}>
+            <div ref={tbodyRef} className="w-full">
               {rows.map((n) => {
                 const content = getVariableContent(n);
                 return (
