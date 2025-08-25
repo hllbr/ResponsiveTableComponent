@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Measure-first yükseklik:
- * - available = containerH - headerH - filterH - footerH
- * - scrollArea.height = available
- * - overflows? paddingBottom = footerH : 0 (kısa tabloda boşluk bırakma)
- * - rAF + ±1–2px eşik ile jitter azalt
+ * Enhanced viewport-based responsive table layout:
+ * - Calculates available viewport height dynamically
+ * - Only tbody scrolls when content overflows
+ * - No gaps when content is short (height: auto)
+ * - Full-row snap when scrolling is needed
+ * - Smooth layout updates with RAF and thresholds
  */
 export function useMeasureLayout() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -13,8 +14,8 @@ export function useMeasureLayout() {
   const filterRef = useRef<HTMLDivElement | null>(null);
   const paginationRef = useRef<HTMLDivElement | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
-  const theadRef = useRef<HTMLTableSectionElement | null>(null);
-  const tbodyRef = useRef<HTMLTableSectionElement | null>(null);
+  const theadRef = useRef<HTMLDivElement | null>(null);
+  const tbodyRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -28,67 +29,119 @@ export function useMeasureLayout() {
     if (!container || !scrollArea) return;
 
     const applyLayout = () => {
-      // Dinamik yükseklik için scrollArea'nın doğal boyutunu kullan
-      const contentH = (thead?.offsetHeight ?? 0) + (tbody?.offsetHeight ?? 0);
+      // 1. Fit-to-viewport calculation
+      const rect = container.getBoundingClientRect();
+      const availableViewport = Math.max(0, window.innerHeight - rect.top - 8);
+
+      // 2. Calculate component heights
       const Hh = header?.offsetHeight ?? 0;
       const Hf = filter?.offsetHeight ?? 0;
       const Hp = pagination?.offsetHeight ?? 0;
 
-      // Container'ın max-height'ı var, bu sınırı kontrol et
-      const maxHeight = container.style.maxHeight
-        ? (parseFloat(container.style.maxHeight.replace("vh", "")) *
-            window.innerHeight) /
-          100
-        : window.innerHeight * 0.7;
+      // 3. Calculate content heights
+      const theadHeight = thead?.offsetHeight ?? 0;
+      const tbodyHeight = tbody?.offsetHeight ?? 0;
+      const contentHeight = theadHeight + tbodyHeight;
 
-      const maxScrollAreaHeight = maxHeight - Hh - Hf - Hp;
-      const naturalHeight = contentH + Hh + Hf;
+      // 4. Calculate natural height (all content without scroll)
+      const naturalHeight = Hh + Hf + theadHeight + tbodyHeight + Hp;
 
-      // Eğer içerik max-height'tan küçükse, scroll area'yı içerik boyutunda bırak
-      // Eğer büyükse, max-height'a kadar scroll yap
-      if (naturalHeight <= maxHeight) {
-        // İçerik küçük - scroll area doğal boyutunda
+      // Debug logging
+      console.log("Layout Debug:", {
+        availableViewport,
+        naturalHeight,
+        Hh,
+        Hf,
+        Hp,
+        theadHeight,
+        tbodyHeight,
+        needsScroll: naturalHeight > availableViewport,
+      });
+
+      // 5. Apply layout logic
+      if (naturalHeight <= availableViewport) {
+        // Short content: no scroll, no gaps, extend to fit viewport
+        container.style.height = "auto";
         scrollArea.style.height = "auto";
         scrollArea.style.overflowY = "visible";
+        scrollArea.style.paddingBottom = "0px";
+        console.log("Layout: Short content - no scroll needed");
       } else {
-        // İçerik büyük - scroll area sınırlı yükseklikte
-        scrollArea.style.height = `${maxScrollAreaHeight}px`;
+        // Long content: scroll only tbody with full-row snap
+        container.style.height = `${availableViewport}px`;
+
+        // Calculate max body height for scrolling
+        const maxBodyHeight = availableViewport - Hh - Hf - Hp - theadHeight;
+
+        // Full-row snap: find how many complete rows fit
+        let visibleRowsHeight = 0;
+        let visibleRowCount = 0;
+
+        if (tbody && maxBodyHeight > 0) {
+          // Get all row divs (direct children of tbody)
+          const rows = Array.from(tbody.children) as HTMLElement[];
+
+          for (const row of rows) {
+            const rowHeight = row.offsetHeight;
+            if (visibleRowsHeight + rowHeight <= maxBodyHeight + 1) {
+              visibleRowsHeight += rowHeight;
+              visibleRowCount++;
+            } else {
+              break;
+            }
+          }
+        }
+
+        // Apply snapped height if we have visible rows
+        if (visibleRowCount > 0 && visibleRowsHeight > 0) {
+          scrollArea.style.height = `${theadHeight + visibleRowsHeight}px`;
+          console.log("Layout: Full-row snap applied", {
+            visibleRowCount,
+            visibleRowsHeight,
+            snappedHeight: theadHeight + visibleRowsHeight,
+          });
+        } else {
+          scrollArea.style.height = `${maxBodyHeight}px`;
+          console.log("Layout: Standard scroll height", { maxBodyHeight });
+        }
+
         scrollArea.style.overflowY = "auto";
+
+        // Remove padding bottom - it causes unnecessary empty space
+        scrollArea.style.paddingBottom = "0px";
       }
 
+      // Always enable horizontal scroll if needed
       scrollArea.style.overflowX = "auto";
-      scrollArea.style.paddingBottom = "0px";
     };
 
+    // Create observers for all relevant elements
     const ro = new ResizeObserver(() => requestAnimationFrame(applyLayout));
     ro.observe(container);
     header && ro.observe(header);
     filter && ro.observe(filter);
     pagination && ro.observe(pagination);
     ro.observe(scrollArea);
+    thead && ro.observe(thead);
+    tbody && ro.observe(tbody);
 
+    // Mutation observer for content changes
     const mo = new MutationObserver(() => requestAnimationFrame(applyLayout));
     mo.observe(scrollArea, { childList: true, subtree: true });
 
-    // İlk layout ve window resize handling
+    if (tbody) {
+      mo.observe(tbody, { childList: true, subtree: true });
+    }
+
+    // Initial layout and window resize handling
     requestAnimationFrame(applyLayout);
     const onWinResize = () => requestAnimationFrame(applyLayout);
     window.addEventListener("resize", onWinResize);
-
-    // Content değişimlerini de izle (tbody için ekstra observer)
-    if (tbody) {
-      const tbodyMutationObserver = new MutationObserver(() =>
-        requestAnimationFrame(applyLayout)
-      );
-      tbodyMutationObserver.observe(tbody, { childList: true, subtree: true });
-    }
 
     return () => {
       ro.disconnect();
       mo.disconnect();
       window.removeEventListener("resize", onWinResize);
-      // Tbody mutation observer cleanup'ı da ele almak lazım ama
-      // referans yok, bu durumda ResizeObserver zaten handle ediyor
     };
   }, []);
 

@@ -21,17 +21,18 @@ const examples = [
     path: "/no-pagination",
     description: "Pagination olmadan tablo",
   },
-  {
-    id: "loading",
-    title: "Yükleniyor",
-    path: "/loading",
-    description: "Loading durumu örneği",
-  },
+
   {
     id: "no-filter",
     title: "Filter Yok",
     path: "/no-filter",
     description: "Filter olmadan tablo",
+  },
+  {
+    id: "variable-height",
+    title: "Variable Height",
+    path: "/variable-height",
+    description: "Variable row heights with full-row snap",
   },
 ];
 
@@ -81,12 +82,16 @@ export default function Sidebar({
     "/header-table",
     "/large-data",
     "/no-pagination",
-    "/loading",
+
     "/no-filter",
+    "/variable-height",
+    "/uniform-data",
+    "/clean-uniform",
+    "/clean-mixed",
   ].includes(location.pathname);
 
   return (
-    <div className="w-80 bg-pink-200 border-r border-pink-300 h-screen overflow-y-auto flex flex-col">
+    <div className="w-80 bg-pink-200 border-r border-pink-300 h-screen overflow-y-auto overscroll-none flex flex-col">
       {/* Navigation */}
       <div className="p-3 space-y-2">
         <Link
@@ -121,6 +126,83 @@ export default function Sidebar({
         >
           📋 Header + Table
         </Link>
+
+        <Link
+          to="/large-data"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/large-data"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          📊 Large Data
+        </Link>
+
+        <Link
+          to="/no-pagination"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/no-pagination"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          📄 No Pagination
+        </Link>
+
+        <Link
+          to="/no-filter"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/no-filter"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          🔍 Filter Yok
+        </Link>
+
+        <Link
+          to="/variable-height"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/variable-height"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          🤖 Auto Height (Mixed Data)
+        </Link>
+
+        <Link
+          to="/uniform-data"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/uniform-data"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          📏 Uniform Data (Fixed Mode)
+        </Link>
+
+        <Link
+          to="/clean-uniform"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/clean-uniform"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          🟦 Clean Uniform
+        </Link>
+
+        <Link
+          to="/clean-mixed"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/clean-mixed"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          🟩 Clean Mixed
+        </Link>
       </div>
 
       {/* Page Info Section */}
@@ -144,6 +226,14 @@ export default function Sidebar({
               ? "⏳ Loading"
               : location.pathname === "/no-filter"
               ? "🔍 Filter Yok"
+              : location.pathname === "/variable-height"
+              ? "🤖 Auto Height Demo"
+              : location.pathname === "/uniform-data"
+              ? "📏 Uniform Data Demo"
+              : location.pathname === "/clean-uniform"
+              ? "🟦 Clean Uniform"
+              : location.pathname === "/clean-mixed"
+              ? "🟩 Clean Mixed"
               : "📄 Diğer Sayfa"}
           </p>
           {showControls && (
@@ -162,7 +252,7 @@ export default function Sidebar({
       </div>
 
       {/* Table Controls */}
-      {showControls && onPageSizeChange && (
+      {showControls && onPageSizeChange && onTotalRowsChange && (
         <div className="flex-1 border-t border-pink-300 min-h-0">
           <DataControls
             pageSize={pageSize}
