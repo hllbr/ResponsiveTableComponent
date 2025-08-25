@@ -190,9 +190,14 @@ export default function TableSim({
 
   // Function to generate content for demonstration
   const getRowContent = (rowNum: number): RowContent => {
-    // className'e göre özel veri tipi kullan
+    // className'e göre özel veri tipi kullan - bu her zaman öncelik alır
     if (className?.includes("uniform-data-demo")) {
       return generateUniformContent(rowNum);
+    }
+
+    // smart-auto-height-demo için realistic data kullan
+    if (className?.includes("smart-auto-height-demo")) {
+      return generateRealisticContent(rowNum);
     }
 
     // Otomatik mod veya manuel mod seçimine göre içerik oluştur

@@ -100,6 +100,38 @@ const defaultPageData: Record<string, PageData> = {
     loading: false,
     showNoData: false,
   },
+  "/variable-height": {
+    pageSize: 25,
+    totalRows: 100,
+    withFilter: true,
+    withPagination: true,
+    loading: false,
+    showNoData: false,
+  },
+  "/uniform-data": {
+    pageSize: 25,
+    totalRows: 100,
+    withFilter: true,
+    withPagination: true,
+    loading: false,
+    showNoData: false,
+  },
+  "/clean-uniform": {
+    pageSize: 25,
+    totalRows: 100,
+    withFilter: true,
+    withPagination: true,
+    loading: false,
+    showNoData: false,
+  },
+  "/clean-mixed": {
+    pageSize: 25,
+    totalRows: 150,
+    withFilter: true,
+    withPagination: true,
+    loading: false,
+    showNoData: false,
+  },
 };
 
 export function TableProvider({ children }: TableProviderProps) {
