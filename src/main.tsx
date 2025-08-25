@@ -12,6 +12,9 @@ import NoPaginationExample from "./pages/NoPaginationExample";
 
 import NoFilterExample from "./pages/NoFilterExample";
 import VariableHeightExample from "./pages/VariableHeightExample";
+import UniformDataExample from "./pages/UniformDataExample";
+import CleanUniformExample from "./pages/CleanUniformExample";
+import CleanMixedExample from "./pages/CleanMixedExample";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +49,18 @@ const router = createBrowserRouter([
       {
         path: "/variable-height",
         element: <VariableHeightExample />,
+      },
+      {
+        path: "/uniform-data",
+        element: <UniformDataExample />,
+      },
+      {
+        path: "/clean-uniform",
+        element: <CleanUniformExample />,
+      },
+      {
+        path: "/clean-mixed",
+        element: <CleanMixedExample />,
       },
     ],
   },

@@ -85,6 +85,9 @@ export default function Sidebar({
 
     "/no-filter",
     "/variable-height",
+    "/uniform-data",
+    "/clean-uniform",
+    "/clean-mixed",
   ].includes(location.pathname);
 
   return (
@@ -165,7 +168,40 @@ export default function Sidebar({
               : "bg-pink-300 text-pink-800 hover:bg-pink-400"
           }`}
         >
-          📏 Variable Height
+          🤖 Auto Height (Mixed Data)
+        </Link>
+
+        <Link
+          to="/uniform-data"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/uniform-data"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          📏 Uniform Data (Fixed Mode)
+        </Link>
+
+        <Link
+          to="/clean-uniform"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/clean-uniform"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          🟦 Clean Uniform
+        </Link>
+
+        <Link
+          to="/clean-mixed"
+          className={`block w-full p-3 rounded-lg text-center transition-colors ${
+            location.pathname === "/clean-mixed"
+              ? "bg-pink-600 text-white font-semibold"
+              : "bg-pink-300 text-pink-800 hover:bg-pink-400"
+          }`}
+        >
+          🟩 Clean Mixed
         </Link>
       </div>
 
@@ -191,7 +227,13 @@ export default function Sidebar({
               : location.pathname === "/no-filter"
               ? "🔍 Filter Yok"
               : location.pathname === "/variable-height"
-              ? "📏 Variable Height"
+              ? "🤖 Auto Height Demo"
+              : location.pathname === "/uniform-data"
+              ? "📏 Uniform Data Demo"
+              : location.pathname === "/clean-uniform"
+              ? "🟦 Clean Uniform"
+              : location.pathname === "/clean-mixed"
+              ? "🟩 Clean Mixed"
               : "📄 Diğer Sayfa"}
           </p>
           {showControls && (
@@ -210,7 +252,7 @@ export default function Sidebar({
       </div>
 
       {/* Table Controls */}
-      {showControls && onPageSizeChange && (
+      {showControls && onPageSizeChange && onTotalRowsChange && (
         <div className="flex-1 border-t border-pink-300 min-h-0">
           <DataControls
             pageSize={pageSize}
